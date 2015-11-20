@@ -43,7 +43,9 @@ class WebSocketHandler implements MessageComponentInterface
      */
     public function onOpen(ConnectionInterface $conn)
     {
-        $this->_clients->set($conn->resourceId, new Client($conn));
+        $client = new Client($conn);
+        $this->_clients->set($conn->resourceId, $client);
+        $this->_handlerFactory->open($client);
         echo "connect to server\n";
     }
 
@@ -55,7 +57,10 @@ class WebSocketHandler implements MessageComponentInterface
     public function onClose(ConnectionInterface $conn)
     {
         // The connection is closed, remove it, as we can no longer send it messages
-        $this->_clients->remove($conn->resourceId);
+        $client = new Client($conn);
+        $this->_clients->remove($client->getResourceId());
+        $this->_handlerFactory->close($client);
+        unset($client);
         echo "close connect to server\n";
     }
 
