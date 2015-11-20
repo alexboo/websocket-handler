@@ -92,13 +92,13 @@ class WebSocketHandler implements MessageComponentInterface
         $request = new Request($msg);
         if (!empty($request->command)) {
             $response = new Response();
+            $response->command = $request->command;
             try {
                 /**
                  * @var Handler $handler
                  */
                 $handler = $this->_handlerFactory->getHandler($client, $request->command);
                 if (method_exists($handler, 'execute')) {
-                    $response->command = $request->command;
                     $response->data = $handler->execute($client, $request->data);
                     $client->send($response);
                 } else {
