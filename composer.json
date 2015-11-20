@@ -1,9 +1,9 @@
 {
-    "name": "alexboo/WebSocketHandler",
+    "name": "alexboo/websocket-handler",
     "type": "library",
-    "description": "WebSocket handler",
+    "description": "websocket handler",
     "keywords": ["websocket","handler"],
-    "homepage": "https://github.com/alexboo/WebSocketHandler",
+    "homepage": "https://github.com/alexboo/websocket-handler",
     "license": "GPLv2",
     "authors": [
         {
