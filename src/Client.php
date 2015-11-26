@@ -81,7 +81,27 @@ class Client
      */
     public function send(Response $response)
     {
-        $this->connect->send((string) $response);
+        $this->connect->send((string)$response);
+    }
+
+    /**
+     * Create response for send
+     * @param $command
+     * @param null $data
+     * @param null $error
+     * @return Response
+     */
+    public function createResponse($command, $data = null, $error = null)
+    {
+        $response = new Response();
+        $response->command = $command;
+        if (!empty($data)) {
+            $response->data = $data;
+        }
+        if (!empty($error)) {
+            $response->error = $error;
+        }
+        return $response;
     }
 
     public function __set($name, $value)

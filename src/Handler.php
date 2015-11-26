@@ -3,73 +3,107 @@
 namespace Alexboo\WebSocketHandler;
 
 use ReflectionClass;
+use ReflectionParameter;
 
 class Handler
 {
-    protected $class;
-    protected $methodName;
+    protected $_object;
+    protected $_method;
+    protected $_closure;
+
+    protected $_client;
+    protected $_data;
 
     /**
-     * @return mixed
+     * Set object like handler
+     * @param $object
+     * @param $method
+     * @throws WebSocketHandlerException
      */
-    public function getClass()
+    public function setObject($object, $method)
     {
-        return $this->class;
+        if (empty($object) || empty($method)) {
+            throw new WebSocketHandlerException("You must specify a processing entity");
+        }
+
+        $this->_object = $object;
+        $this->_method = $method;
     }
 
     /**
-     * @param mixed $class
+     * Set processing closure
+     * @param \Closure $closure
+     * @throws WebSocketHandlerException
      */
-    public function setClass($class)
+    public function setClosure(\Closure $closure)
     {
-        $this->class = $class;
+        if (empty($closure)) {
+            throw new WebSocketHandlerException("You must specify a processing entity");
+        }
+
+        $this->_closure = $closure;
     }
 
     /**
-     * @return mixed
+     * Execute handler
+     * @param Client $client
+     * @param $data
+     * @return mixed|null
      */
-    public function getMethodName()
-    {
-        return $this->methodName;
-    }
-
-    /**
-     * @param mixed $methodName
-     */
-    public function setMethodName($methodName)
-    {
-        $this->methodName = $methodName;
-    }
-
     public function execute(Client $client, $data)
     {
-        if (is_object($this->class)) {
-            $class = new ReflectionClass(get_class($this->class));
+        $this->_client = $client;
+        $this->_data = $data;
 
-            $method = $class->getMethod($this->methodName);
-
-            $parameters = [];
-
-            foreach ($method->getParameters() as $parameter) {
-                $paramClass = $parameter->getClass();
-                if ($paramClass != null) {
-                    if ($paramClass->getName() == 'Alexboo\WebSocketHandler\Client') {
-                        $parameters[] = $client;
-                    } elseif ($paramClass->implementsInterface('Alexboo\WebSocketHandler\RequestInterface')) {
-                        $parameters[] = new $paramClass->name($data);;
-                    } else {
-                        $parameters[] = null;
-                    }
-                }
-            }
-
+        // Execute handler object
+        if (!empty($this->_object)) {
+            $class = new ReflectionClass(get_class($this->_object));
+            $method = $class->getMethod($this->_method);
+            $parameters = $this->prepareParameters($method->getParameters());
             if (empty($parameters)) {
                 $parameters[] = $data;
             }
+            return call_user_func_array([$this->_object, $this->_method], $parameters);
+        }
 
-            return call_user_func_array([$this->class, $this->methodName], $parameters);
+        // Execute closure handler
+        if (!empty($this->_closure)) {
+            $function = new \ReflectionFunction($this->_closure);
+            $parameters = $this->prepareParameters($function->getParameters());
+            if (empty($parameters)) {
+                $parameters[] = $data;
+            }
+            return call_user_func_array($this->_closure, $parameters);
         }
 
         return null;
+    }
+
+    /**
+     * Prepare parameters for handler
+     * @param $parameters
+     * @return array
+     */
+    protected function prepareParameters($parameters)
+    {
+        $result = [];
+
+        foreach ($parameters as $parameter) {
+            /**
+             * @var ReflectionParameter $parameter
+             */
+            $paramClass = $parameter->getClass();
+            if ($paramClass != null) {
+                if ($paramClass->getName() == 'Alexboo\WebSocketHandler\Client') {
+                    $result[] = $this->_client;
+                } elseif ($paramClass->implementsInterface('Alexboo\WebSocketHandler\RequestInterface')) {
+                    $result[] = new $paramClass->name($this->_data);
+                } else {
+                    $result[] = null;
+                }
+            }
+        }
+
+        return $result;
     }
 }

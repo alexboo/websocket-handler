@@ -5,7 +5,7 @@ namespace Alexboo\WebSocketHandler;
 use Ratchet\ConnectionInterface;
 use Ratchet\MessageComponentInterface;
 
-class WebSocketHandler implements MessageComponentInterface
+class WebSocketHandler extends Output implements MessageComponentInterface
 {
     /**
      * @var Storage
@@ -17,14 +17,34 @@ class WebSocketHandler implements MessageComponentInterface
      */
     protected $_handlerFactory;
 
-    public function __construct(HandlerFactoryInterface $factoryInterface = null)
+    private static $_instance;
+
+    public static function getInstance(HandlerFactoryInterface $factoryInterface = null)
+    {
+        if (empty(self::$_instance)) {
+            self::$_instance = new WebSocketHandler($factoryInterface);
+        }
+        return self::$_instance;
+    }
+
+    private function __construct(HandlerFactoryInterface $factoryInterface = null)
     {
         $this->_clients = new Storage();
         if ($factoryInterface != null) {
             $this->_handlerFactory = $factoryInterface;
         } else {
+            $this->error("Not found HandlerFactory");
             throw new WebSocketHandlerException("Not found HandlerFactory");
         }
+    }
+
+    /**
+     * Get full list of clients
+     * @return Storage
+     */
+    public function getClients()
+    {
+        return $this->_clients;
     }
 
     /**
@@ -44,9 +64,9 @@ class WebSocketHandler implements MessageComponentInterface
     public function onOpen(ConnectionInterface $conn)
     {
         $client = new Client($conn);
-        $this->_clients->set($conn->resourceId, $client);
+            $this->_clients->set($conn->resourceId, $client);
         $this->_handlerFactory->open($client);
-        echo "connect to server\n";
+        $this->out($this->getColoredText(self::FG_COLOR_GREEN, "Client " . $conn->resourceId . " connected to server"));
     }
 
     /**
@@ -61,7 +81,7 @@ class WebSocketHandler implements MessageComponentInterface
         $this->_clients->remove($client->getResourceId());
         $this->_handlerFactory->close($client);
         unset($client);
-        echo "close connect to server\n";
+        $this->out($this->getColoredText(self::FG_COLOR_RED, "Client " . $conn->resourceId . " close connect to server"));
     }
 
     /**
@@ -107,11 +127,13 @@ class WebSocketHandler implements MessageComponentInterface
                     $response->data = $handler->execute($client, $request->data);
                     $client->send($response);
                 } else {
+                    $this->error("Not found handler for command");
                     throw new WebSocketHandlerException("Not found handler for command");
                 }
             } catch (\Exception $e) {
-                $response->error = $e->getTraceAsString();
+                $response->error = $e->getMessage();
                 $client->send($response);
+                $this->error($e->getMessage() . $e->getTraceAsString());
             }
         }
     }
