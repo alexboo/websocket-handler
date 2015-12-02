@@ -134,7 +134,6 @@ class WebSocketHandler extends Output implements MessageComponentInterface
                 $response->error = $e->getMessage();
                 $client->send($response);
                 $this->error($this->getColoredText(self::FG_COLOR_RED, $e->getMessage()));
-                $this->error($e->getTraceAsString());
             }
         }
     }
