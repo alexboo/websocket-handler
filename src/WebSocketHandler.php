@@ -77,9 +77,9 @@ class WebSocketHandler extends Output implements MessageComponentInterface
     public function onClose(ConnectionInterface $conn)
     {
         // The connection is closed, remove it, as we can no longer send it messages
-        $client = new Client($conn);
-        $this->_clients->remove($client->getResourceId());
+        $client = $this->_clients->get($conn->resourceId);
         $this->_handlerFactory->close($client);
+        $this->_clients->remove($client->getResourceId());
         unset($client);
         $this->out($this->getColoredText(self::FG_COLOR_RED, "Client " . $conn->resourceId . " close connect to server"));
     }
