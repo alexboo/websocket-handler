@@ -78,7 +78,7 @@ $ioServer->run();
 
 Parameters that must be passed to the handler defined on the basis ReflectionApi. You can request information about the client specifying the parameters of the "Client" class or query parameters in object implements Alexboo\WebSocketHandler\Interfaces\RequestInterface.
  
- ### Example
+## Example
  
  ```
  class AuthRequest implements RequestInterface {
