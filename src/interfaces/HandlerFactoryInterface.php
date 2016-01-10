@@ -1,6 +1,6 @@
 <?php
 
-namespace Alexboo\WebSocketHandler;
+namespace Alexboo\WebSocketHandler\Interfaces;
 
 interface HandlerFactoryInterface
 {

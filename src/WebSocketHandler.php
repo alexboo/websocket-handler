@@ -2,6 +2,8 @@
 
 namespace Alexboo\WebSocketHandler;
 
+use Alexboo\WebSocketHandler\Exceptions\WebSocketHandlerException;
+use Alexboo\WebSocketHandler\Interfaces\HandlerFactoryInterface;
 use Ratchet\ConnectionInterface;
 use Ratchet\MessageComponentInterface;
 
@@ -85,8 +87,8 @@ class WebSocketHandler extends Output implements MessageComponentInterface
     }
 
     /**
-     * If there is an error with one of the sockets, or somewhere in the application where an Exception is thrown,
-     * the Exception is sent back down the stack, handled by the Server and bubbled back up the application through this method
+     * If there is an error with one of the sockets, or somewhere in the application where an exceptions is thrown,
+     * the exceptions is sent back down the stack, handled by the Server and bubbled back up the application through this method
      * @param  ConnectionInterface $conn
      * @param  \Exception $e
      * @throws \Exception

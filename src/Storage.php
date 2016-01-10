@@ -2,6 +2,7 @@
 
 namespace Alexboo\WebSocketHandler;
 
+use Alexboo\WebSocketHandler\Interfaces\StorageInterface;
 use Iterator;
 
 class Storage implements StorageInterface, Iterator
@@ -64,6 +65,11 @@ class Storage implements StorageInterface, Iterator
     public function __unset($name)
     {
         $this->remove($name);
+    }
+
+    public function __isset($name)
+    {
+        return $this->has($name);
     }
 
     /**

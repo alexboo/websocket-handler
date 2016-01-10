@@ -2,6 +2,9 @@
 
 namespace Alexboo\WebSocketHandler;
 
+use Alexboo\WebSocketHandler\Exceptions\WebSocketHandlerException;
+use Alexboo\WebSocketHandler\Interfaces\StorageInterface;
+
 class Client
 {
     /**

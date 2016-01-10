@@ -16,7 +16,9 @@
     },
     "autoload": {
         "psr-4": {
-            "Alexboo\\WebSocketHandler\\": "src/"
+            "Alexboo\\WebSocketHandler\\": "src/",
+            "Alexboo\\WebSocketHandler\\Interfaces\\": "src/interfaces",
+            "Alexboo\\WebSocketHandler\\Exceptions\\": "src/exceptions"
         }
     }
 }

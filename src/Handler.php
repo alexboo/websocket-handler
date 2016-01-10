@@ -2,6 +2,7 @@
 
 namespace Alexboo\WebSocketHandler;
 
+use Alexboo\WebSocketHandler\Exceptions\WebSocketHandlerException;
 use ReflectionClass;
 use ReflectionParameter;
 
@@ -96,7 +97,7 @@ class Handler
             if ($paramClass != null) {
                 if ($paramClass->getName() == 'Alexboo\WebSocketHandler\Client') {
                     $result[] = $this->_client;
-                } elseif ($paramClass->implementsInterface('Alexboo\WebSocketHandler\RequestInterface')) {
+                } elseif ($paramClass->implementsInterface('Alexboo\WebSocketHandler\Interfaces\RequestInterface')) {
                     $result[] = new $paramClass->name($this->_data);
                 } else {
                     $result[] = null;

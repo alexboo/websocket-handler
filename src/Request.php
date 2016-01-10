@@ -2,6 +2,8 @@
 
 namespace Alexboo\WebSocketHandler;
 
+use Alexboo\WebSocketHandler\Exceptions\WebSocketHandlerException;
+
 class Request
 {
     public $command;
