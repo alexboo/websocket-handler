@@ -2,6 +2,8 @@
 
 namespace Alexboo\WebSocketHandler\Interfaces;
 
+use Alexboo\WebSocketHandler\Client;
+
 interface HandlerFactoryInterface
 {
     /**
