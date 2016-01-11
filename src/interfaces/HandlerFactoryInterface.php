@@ -3,6 +3,7 @@
 namespace Alexboo\WebSocketHandler\Interfaces;
 
 use Alexboo\WebSocketHandler\Client;
+use Alexboo\WebSocketHandler\Handler;
 
 interface HandlerFactoryInterface
 {
