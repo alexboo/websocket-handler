@@ -4,7 +4,7 @@
     "description": "websocket handler",
     "keywords": ["websocket","handler"],
     "homepage": "https://github.com/alexboo/websocket-handler",
-    "license": "GPLv2",
+    "license": "LGPL-3.0",
     "authors": [
         {
             "name": "Alexey Bulybin"
